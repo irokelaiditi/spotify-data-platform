@@ -77,7 +77,11 @@ def main() -> None:
         for _ in range(EVENT_COUNT)
     ]
 
-    output_file = Path("data/raw/listening_events.json")
+    batch_timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+
+    output_file = Path(
+        f"data/raw/listening_events_{batch_timestamp}.json"
+    )
     save_events(events, output_file)
 
     print(f"Generated {len(events)} events")
