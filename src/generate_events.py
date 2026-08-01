@@ -73,7 +73,7 @@ def main() -> None:
 
     start_time = datetime.now(timezone.utc) - timedelta(days=LOOKBACK_DAYS)
 
-    batch_timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+    batch_timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
 
 
     events = [
