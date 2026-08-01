@@ -5,6 +5,9 @@ import json
 import random
 from pathlib import Path
 from datetime import datetime, timedelta, timezone
+from uuid import uuid4
+
+random.seed(42)
 
 event_types = [
     "track_played",
@@ -45,6 +48,7 @@ start_time = datetime.now(timezone.utc) - timedelta(days=30)
 
 for _ in range(10_000):
     event = {
+        "event_id": str(uuid4()),
         "user_id": random.randint(1, 1000),
         "track_id": random.randint(1, 500),
         "event_type": random.choice(event_types),
