@@ -35,11 +35,12 @@ EVENT_COUNT = 10_000
 LOOKBACK_DAYS = 30
 
 
-def generate_event(start_time: datetime) -> dict:
+def generate_event(start_time: datetime, batch_id: str) -> dict:
     """Generate one synthetic music listening event."""
 
     return {
         "event_id": str(uuid4()),
+        "batch_id": batch_id,
         "user_id": random.randint(1, 1000),
         "track_id": random.randint(1, 500),
         "event_type": random.choice(EVENT_TYPES),
@@ -72,12 +73,14 @@ def main() -> None:
 
     start_time = datetime.now(timezone.utc) - timedelta(days=LOOKBACK_DAYS)
 
-    events = [
-        generate_event(start_time)
-        for _ in range(EVENT_COUNT)
-    ]
-
     batch_timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+
+
+    events = [
+    generate_event(start_time, batch_timestamp)
+    for _ in range(EVENT_COUNT)
+    ]
+    
 
     output_file = Path(
         f"data/raw/listening_events_{batch_timestamp}.json"
