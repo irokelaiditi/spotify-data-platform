@@ -1,0 +1,18 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: spotify-postgres
+
+    environment:
+      POSTGRES_DB: spotify
+      POSTGRES_USER: spotify_user
+      POSTGRES_PASSWORD: spotify_password
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
