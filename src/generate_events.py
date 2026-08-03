@@ -51,7 +51,7 @@ def generate_event(start_time: datetime, batch_id: str) -> dict:
             )
         ).isoformat(),
         "device_type": random.choice(DEVICE_TYPES),
-        "country": random.choice(COUNTRIES),
+        "country": random.choice(COUNTRIES + [None]),
         "subscription_type": random.choice(SUBSCRIPTION_TYPES),
         "listening_duration_seconds": random.randint(10, 600),
     }
