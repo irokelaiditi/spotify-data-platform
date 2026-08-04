@@ -1,37 +1,23 @@
 import json
 from pathlib import Path
+
 import psycopg
 
 
-RAW_DATA_DIR = Path("data/raw")
-
-
-def find_latest_batch() -> Path:
-    """Return the most recently modified listening-events batch."""
-
-    batch_files = list(
-        RAW_DATA_DIR.glob("listening_events_*.json")
-    )
-
-    if not batch_files:
-        raise FileNotFoundError(
-            "No listening-events batch files were found."
-        )
-
-    return max(
-        batch_files,
-        key=lambda file_path: file_path.stat().st_mtime,
-    )
+RAW_DATA_FILE = Path(
+    "data/raw/listening_events.json"
+)
 
 
 def load_events(file_path: Path) -> list[dict]:
-    """Load events from a JSON batch file."""
+    """Load events from the reproducible JSON dataset."""
 
     with file_path.open("r", encoding="utf-8") as file:
         return json.load(file)
 
+
 def insert_events(events: list[dict]) -> int:
-    """Insert listening events into the Bronze PostgreSQL table."""
+    """Insert events into the Bronze PostgreSQL table."""
 
     connection_string = (
         "host=localhost "
@@ -44,11 +30,10 @@ def insert_events(events: list[dict]) -> int:
     insert_query = """
         INSERT INTO bronze.listening_events (
             event_id,
-            batch_id,
             user_id,
             track_id,
             event_type,
-            timestamp,
+            event_timestamp,
             device_type,
             country,
             subscription_type,
@@ -56,11 +41,10 @@ def insert_events(events: list[dict]) -> int:
         )
         VALUES (
             %(event_id)s,
-            %(batch_id)s,
             %(user_id)s,
             %(track_id)s,
             %(event_type)s,
-            %(timestamp)s,
+            %(event_timestamp)s,
             %(device_type)s,
             %(country)s,
             %(subscription_type)s,
@@ -75,14 +59,14 @@ def insert_events(events: list[dict]) -> int:
 
     return len(events)
 
+
 def main() -> None:
-    """Find and load the latest raw event batch."""
+    """Load the reproducible dataset into PostgreSQL."""
 
-    latest_batch = find_latest_batch()
-    events = load_events(latest_batch)
-
+    events = load_events(RAW_DATA_FILE)
     processed_count = insert_events(events)
-    print(f"Latest batch: {latest_batch}")
+
+    print(f"Loaded dataset: {RAW_DATA_FILE}")
     print(f"Processed {processed_count} events")
 
 

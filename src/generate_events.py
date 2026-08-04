@@ -2,7 +2,7 @@ import json
 import random
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from uuid import uuid4
+from uuid import NAMESPACE_URL, uuid5
 
 
 EVENT_TYPES = [
@@ -33,28 +33,79 @@ SUBSCRIPTION_TYPES = [
 
 EVENT_COUNT = 10_000
 LOOKBACK_DAYS = 30
+DIRTY_RATE = 0.05
+RANDOM_SEED = 42
+
+FIXED_REFERENCE_TIME = datetime(
+    2026,
+    8,
+    1,
+    0,
+    0,
+    tzinfo=timezone.utc,
+)
 
 
-def generate_event(start_time: datetime, batch_id: str) -> dict:
-    """Generate one synthetic music listening event."""
+def add_data_quality_issue(event: dict) -> None:
+    """Add one controlled data-quality issue to an event."""
 
-    return {
-        "event_id": str(uuid4()),
-        "batch_id": batch_id,
+    issue_type = random.choice(
+        [
+            "missing_country",
+            "missing_device",
+            "invalid_event_type",
+            "negative_duration",
+            "inconsistent_subscription",
+        ]
+    )
+
+    if issue_type == "missing_country":
+        event["country"] = None
+    elif issue_type == "missing_device":
+        event["device_type"] = None
+    elif issue_type == "invalid_event_type":
+        event["event_type"] = "unknown_event"
+    elif issue_type == "negative_duration":
+        event["listening_duration_seconds"] = -1
+    elif issue_type == "inconsistent_subscription":
+        event["subscription_type"] = "PREMIUM"
+
+
+def generate_event(
+    start_time: datetime,
+    event_number: int,
+) -> dict:
+    """Generate one reproducible synthetic listening event."""
+
+    event = {
+        "event_id": str(
+            uuid5(
+                NAMESPACE_URL,
+                f"spotify-event-{event_number}",
+            )
+        ),
         "user_id": random.randint(1, 1000),
         "track_id": random.randint(1, 500),
         "event_type": random.choice(EVENT_TYPES),
-        "timestamp": (
+        "event_timestamp": (
             start_time
             + timedelta(
-                seconds=random.randint(0, LOOKBACK_DAYS * 24 * 60 * 60)
+                seconds=random.randint(
+                    0,
+                    LOOKBACK_DAYS * 24 * 60 * 60,
+                )
             )
         ).isoformat(),
         "device_type": random.choice(DEVICE_TYPES),
-        "country": random.choice(COUNTRIES + [None]),
+        "country": random.choice(COUNTRIES),
         "subscription_type": random.choice(SUBSCRIPTION_TYPES),
         "listening_duration_seconds": random.randint(10, 600),
     }
+
+    if random.random() < DIRTY_RATE:
+        add_data_quality_issue(event)
+
+    return event
 
 
 def save_events(events: list[dict], output_file: Path) -> None:
@@ -67,24 +118,23 @@ def save_events(events: list[dict], output_file: Path) -> None:
 
 
 def main() -> None:
-    """Generate and save a batch of synthetic listening events."""
+    """Generate and save the reproducible synthetic dataset."""
 
-    random.seed(42)
+    random.seed(RANDOM_SEED)
 
-    start_time = datetime.now(timezone.utc) - timedelta(days=LOOKBACK_DAYS)
-
-    batch_timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-
+    start_time = FIXED_REFERENCE_TIME - timedelta(
+        days=LOOKBACK_DAYS
+    )
 
     events = [
-    generate_event(start_time, batch_timestamp)
-    for _ in range(EVENT_COUNT)
+        generate_event(start_time, event_number)
+        for event_number in range(EVENT_COUNT)
     ]
-    
 
     output_file = Path(
-        f"data/raw/listening_events_{batch_timestamp}.json"
+        "data/raw/listening_events.json"
     )
+
     save_events(events, output_file)
 
     print(f"Generated {len(events)} events")
