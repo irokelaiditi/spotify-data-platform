@@ -64,3 +64,33 @@ Example:
 
 ```text
 PREMIUM → premium
+
+### Deduplication
+
+**Rule:** Keep only one row when multiple records represent the same business event.
+
+The business key is defined as:
+
+- `user_id`
+- `track_id`
+- `event_type`
+- `event_timestamp`
+
+**Reason:** Duplicate business events would inflate listening and activity metrics.
+
+**Current dataset note:** No logical duplicates were found in the generated Bronze dataset using this business key.
+
+## Silver Table Constraints
+
+The Silver table applies database constraints in addition to transformation rules.
+
+These constraints include:
+
+- `event_id` as the primary key
+- `country` must not be `NULL`
+- `device_type` must not be `NULL`
+- `event_type` must belong to the allowed list
+- `subscription_type` must be either `free` or `premium`
+- `listening_duration_seconds` must be greater than or equal to zero
+
+**Reason:** Transformation rules clean the current dataset, while constraints protect the Silver table from invalid future inserts.
