@@ -31,7 +31,10 @@ SUBSCRIPTION_TYPES = [
     "premium",
 ]
 
-EVENT_COUNT = 10_000
+EVENT_COUNT = 500_000
+USER_COUNT = 15_000
+TRACK_COUNT = 10_000
+
 LOOKBACK_DAYS = 30
 DIRTY_RATE = 0.05
 RANDOM_SEED = 42
@@ -84,8 +87,8 @@ def generate_event(
                 f"spotify-event-{event_number}",
             )
         ),
-        "user_id": random.randint(1, 1000),
-        "track_id": random.randint(1, 500),
+        "user_id": random.randint(1, USER_COUNT),
+        "track_id": random.randint(1, TRACK_COUNT),
         "event_type": random.choice(EVENT_TYPES),
         "event_timestamp": (
             start_time
