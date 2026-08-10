@@ -2,6 +2,9 @@
 -- These checks confirm that the cleaned listening-events table
 -- follows the agreed data-quality rules.
 
+-- =========================================
+-- Silver Listening Events Validations
+-- =========================================
 
 -- 1. Total number of Silver events.
 SELECT COUNT(*) AS total_silver_events
@@ -123,3 +126,73 @@ SELECT
     ) - (
         SELECT COUNT(*) FROM silver.listening_events
     ) AS rejected_event_count;
+
+
+
+-- =========================================
+-- Silver Catalog Validations
+-- =========================================
+
+-- 1. Validate expected row counts.
+SELECT COUNT(*) AS artist_count
+FROM silver.artists;
+
+SELECT COUNT(*) AS album_count
+FROM silver.albums;
+
+SELECT COUNT(*) AS track_count
+FROM silver.tracks;
+
+SELECT COUNT(*) AS track_artist_relationship_count
+FROM silver.track_artists;
+
+
+-- 2. Every non-null album_id must reference an existing Silver album.
+SELECT COUNT(*) AS missing_album_count
+FROM silver.tracks AS t
+LEFT JOIN silver.albums AS a
+    ON t.album_id = a.album_id
+WHERE t.album_id IS NOT NULL
+  AND a.album_id IS NULL;
+
+
+-- 3. Every track-artist track_id must reference an existing Silver track.
+SELECT COUNT(*) AS missing_track_count
+FROM silver.track_artists AS ta
+LEFT JOIN silver.tracks AS t
+    ON ta.track_id = t.track_id
+WHERE t.track_id IS NULL;
+
+
+-- 4. Every track-artist artist_id must reference an existing Silver artist.
+SELECT COUNT(*) AS missing_artist_count
+FROM silver.track_artists AS ta
+LEFT JOIN silver.artists AS a
+    ON ta.artist_id = a.artist_id
+WHERE a.artist_id IS NULL;
+
+
+-- 5. Every listening-event track must exist in the Silver catalog.
+SELECT COUNT(*) AS missing_listening_event_track_count
+FROM silver.listening_events AS le
+LEFT JOIN silver.tracks AS t
+    ON le.track_id = t.track_id
+WHERE t.track_id IS NULL;
+
+
+-- 6. Track durations must be positive.
+SELECT COUNT(*) AS invalid_track_duration_count
+FROM silver.tracks
+WHERE duration_seconds <= 0;
+
+
+-- 7. Check for duplicate track-artist relationships.
+SELECT
+    track_id,
+    artist_id,
+    COUNT(*) AS duplicate_count
+FROM silver.track_artists
+GROUP BY
+    track_id,
+    artist_id
+HAVING COUNT(*) > 1;
