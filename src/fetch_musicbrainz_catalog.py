@@ -289,7 +289,11 @@ def build_catalog(
             length_ms = recording.get("length")
 
             # Ignore recordings without a valid duration.
-            if length_ms is None or length_ms <= 0:
+            if length_ms is None:
+                continue
+            duration_seconds = round(length_ms / 1000)
+
+            if duration_seconds <= 0:
                 continue
 
             # The recording must reference at least one
