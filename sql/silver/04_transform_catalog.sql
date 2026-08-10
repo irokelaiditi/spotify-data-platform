@@ -2,10 +2,13 @@
 -- Silver Catalog Transformation
 -- =========================================
 
+DROP TABLE IF EXISTS silver.track_artists;
+DROP TABLE IF EXISTS silver.tracks;
+DROP TABLE IF EXISTS silver.albums;
+DROP TABLE IF EXISTS silver.artists;
 
 -- Rebuild Silver artists table.
 
-DROP TABLE IF EXISTS silver.artists;
 
 CREATE TABLE silver.artists AS
 SELECT
@@ -24,7 +27,6 @@ ALTER COLUMN artist_name SET NOT NULL;
 
 -- Rebuild Silver albums table.
 
-DROP TABLE IF EXISTS silver.albums;
 
 CREATE TABLE silver.albums AS
 SELECT
@@ -42,7 +44,6 @@ ALTER COLUMN album_name SET NOT NULL;
 
 -- Rebuild Silver tracks table.
 
-DROP TABLE IF EXISTS silver.tracks;
 
 CREATE TABLE silver.tracks AS
 SELECT
@@ -74,7 +75,6 @@ REFERENCES silver.albums(album_id);
 
 -- Rebuild Silver track-artists junction table.
 
-DROP TABLE IF EXISTS silver.track_artists;
 
 CREATE TABLE silver.track_artists AS
 SELECT
