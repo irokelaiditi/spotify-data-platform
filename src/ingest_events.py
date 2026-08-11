@@ -22,9 +22,9 @@ def insert_events(events: list[dict]) -> int:
     connection_string = (
         "host=localhost "
         "port=5432 "
-        "dbname=spotify "
-        "user=spotify_user "
-        "password=spotify_password"
+        "dbname=music_streaming "
+        "user=music_streaming_user "
+        "password=music_streaming_password"
     )
 
     insert_query = """

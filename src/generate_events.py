@@ -275,7 +275,7 @@ def generate_event(
         "event_id": str(
             uuid5(
                 NAMESPACE_URL,
-                f"spotify-event-{event_number}",
+                f"music-streaming-event-{event_number}",
             )
         ),
         "user_id": user_id,

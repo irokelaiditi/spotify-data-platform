@@ -105,3 +105,5 @@ SELECT
 FROM information_schema.table_constraints
 WHERE table_schema = 'silver'
   AND table_name = 'track_artists';
+
+

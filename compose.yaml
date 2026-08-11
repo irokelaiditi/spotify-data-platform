@@ -1,12 +1,12 @@
 services:
   postgres:
     image: postgres:16
-    container_name: spotify-postgres
+    container_name: music-streaming-postgres
 
     environment:
-      POSTGRES_DB: spotify
-      POSTGRES_USER: spotify_user
-      POSTGRES_PASSWORD: spotify_password
+      POSTGRES_DB: music_streaming
+      POSTGRES_USER: music_streaming_user
+      POSTGRES_PASSWORD: music_streaming_password
 
     ports:
       - "5432:5432"

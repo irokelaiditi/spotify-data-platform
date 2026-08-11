@@ -12,6 +12,8 @@ The main focus is on building production-inspired data pipelines, applying data 
 
 # Architecture
 
+![Architecture](docs/architecture.png)
+
 The platform follows a layered data architecture with two primary data sources:
 
 - **Listening Events:** 500,000 reproducible synthetic listening events with stable user attributes, realistic device usage and a long-tail track popularity distribution.

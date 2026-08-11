@@ -9,11 +9,10 @@ RAW_DATA_DIR = Path("data/raw")
 CONNECTION_STRING = (
     "host=localhost "
     "port=5432 "
-    "dbname=spotify "
-    "user=spotify_user "
-    "password=spotify_password"
+    "dbname=music_streaming "
+    "user=music_streaming_user "
+    "password=music_streaming_password"
 )
-
 
 def load_json(file_name: str) -> list[dict]:
     """Load records from a raw JSON file."""
