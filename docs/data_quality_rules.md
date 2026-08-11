@@ -32,11 +32,21 @@ The Silver layer contains cleaned, standardized and validated datasets suitable 
 
 **Reason:** Country is optional metadata. A missing country does not make the listening event unusable.
 
+#### User Country Consistency
+
+**Rule:** Each synthetic user is assigned a single country across the generated dataset.
+
+Controlled missing country values may exist in Bronze and are replaced with `UNKNOWN` in Silver.
+
+**Reason:** Country is modeled as a stable user-level attribute for the scope of the dataset rather than an independently generated property of each event.
+
 #### Device Type
 
 **Rule:** Replace `NULL` values with `UNKNOWN`.
 
 **Reason:** A missing device type does not invalidate the listening activity.
+
+Device type may vary between events because the same user can listen from different devices.
 
 #### Event Type
 
@@ -55,7 +65,9 @@ Allowed values:
 
 **Rule:** Exclude rows where `listening_duration_seconds` is negative.
 
-**Reason:** Negative listening time indicates corrupted or invalid source data.
+Valid listening durations must not exceed the duration of the associated catalog track.
+
+**Reason:** Negative listening time indicates corrupted source data, while listening time greater than the corresponding track duration would be logically inconsistent.
 
 #### Subscription Type
 
@@ -70,7 +82,16 @@ Example:
 
 ```text
 PREMIUM → premium
+FREE    → free
 ```
+
+#### User Subscription Consistency
+
+**Rule:** Each synthetic user is assigned a single subscription type across the generated dataset.
+
+Controlled capitalization inconsistencies such as `PREMIUM` and `FREE` may exist in Bronze and are normalized in Silver.
+
+**Reason:** Subscription type is modeled as a user-level attribute rather than an independently generated property of each listening event.
 
 #### Deduplication
 
@@ -97,7 +118,7 @@ Music catalog metadata is sourced from MusicBrainz and normalized before being u
 
 **Rule:** Recordings without a valid positive duration are excluded from the catalog.
 
-**Reason:** Track duration is required for reliable track-level analysis. Missing or invalid durations are not replaced with synthetic values.
+**Reason:** Track duration is required for reliable track-level analysis. Missing, zero or negative durations are not replaced with synthetic values.
 
 #### Release Dates
 
@@ -164,14 +185,21 @@ Constraints include:
 - `subscription_type` must be either `free` or `premium`
 - `listening_duration_seconds` must be greater than or equal to zero
 
+Additional validation ensures that:
+
+- Each user has only one normalized subscription type
+- Each user has only one non-`UNKNOWN` country
+- Listening duration does not exceed the duration of the associated track
+
 ### Catalog
 
 Relational integrity rules ensure that:
 
 - Artist, track and album identifiers are unique
 - Track-artist relationships reference valid tracks and artists
-- Track durations contain valid non-negative values
+- Every track is associated with at least one artist
+- Track durations contain valid positive values
 - Album relationships remain optional
 - Duplicate track-artist relationships are prevented
 
-**Reason:** Transformation rules clean and standardize the current datasets, while database constraints protect the Silver layer from invalid future records.
+**Reason:** Transformation rules clean and standardize the current datasets, while database constraints and validation queries protect the Silver layer from invalid or logically inconsistent records.

@@ -196,3 +196,4 @@ GROUP BY
     track_id,
     artist_id
 HAVING COUNT(*) > 1;
+
