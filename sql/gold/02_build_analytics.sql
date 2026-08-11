@@ -223,3 +223,63 @@ SELECT
 
 FROM silver.listening_events;
 
+
+-- =========================================
+-- Gold Daily Event Metrics
+-- =========================================
+
+DROP TABLE IF EXISTS gold.daily_event_metrics;
+
+CREATE TABLE gold.daily_event_metrics AS
+SELECT
+    event_timestamp::date AS event_date,
+
+    COUNT(*) FILTER (
+        WHERE event_type = 'track_played'
+    ) AS played_events,
+
+    COUNT(*) FILTER (
+        WHERE event_type = 'track_paused'
+    ) AS paused_events,
+
+    COUNT(*) FILTER (
+        WHERE event_type = 'track_completed'
+    ) AS completed_events,
+
+    COUNT(*) FILTER (
+        WHERE event_type = 'track_skipped'
+    ) AS skipped_events,
+
+    COUNT(DISTINCT user_id) AS unique_users
+
+FROM silver.listening_events
+GROUP BY event_timestamp::date
+ORDER BY event_date;
+
+
+-- =========================================
+-- Gold Top Tracks by Country
+-- =========================================
+
+DROP TABLE IF EXISTS gold.track_performance_by_country;
+
+CREATE TABLE gold.track_performance_by_country AS
+SELECT
+    le.country,
+    le.track_id,
+    t.track_name,
+    COUNT(*) AS total_events,
+    COUNT(DISTINCT le.user_id) AS unique_listeners,
+    SUM(le.listening_duration_seconds) AS total_listening_seconds,
+    AVG(le.listening_duration_seconds) AS average_listening_seconds
+FROM silver.listening_events AS le
+JOIN silver.tracks AS t
+    ON le.track_id = t.track_id
+GROUP BY
+    le.country,
+    le.track_id,
+    t.track_name;
+
+
+
+
