@@ -12,7 +12,7 @@ The main focus is on building production-inspired data pipelines, applying data 
 
 # Architecture
 
-![Architecture](docs/architecture.png)
+![Architecture](images/architecture.png)
 
 The platform follows a layered data architecture with two primary data sources:
 
