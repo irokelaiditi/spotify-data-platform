@@ -38,7 +38,7 @@ CONTACT_EMAIL = os.getenv(
 
 HEADERS = {
     "User-Agent": (
-        f"spotify-data-platform/1.0 "
+        f"music-streaming-data-platform/1.0 "
         f"({CONTACT_EMAIL})"
     )
 }

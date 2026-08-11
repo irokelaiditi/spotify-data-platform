@@ -1,4 +1,4 @@
-# Spotify Data Platform
+# Music Streaming Data Platform
 
 An end-to-end Data Engineering project that simulates the data platform of a modern music streaming service.
 
@@ -12,12 +12,10 @@ The main focus is on building production-inspired data pipelines, applying data 
 
 # Architecture
 
-![Spotify Data Platform Architecture](images/architecture.png)
-
 The platform follows a layered data architecture with two primary data sources:
 
-- **Listening Events:** 500,000 reproducible synthetic listening events generated using Python.
-- **Music Catalog:** Real artist, track and album metadata sourced from MusicBrainz.
+- **Listening Events:** 500,000 reproducible synthetic listening events with stable user attributes, realistic device usage and a long-tail track popularity distribution.
+- **Music Catalog:** Real artist, track and album metadata sourced from curated official MusicBrainz releases.
 - **Raw Data Layer:** Source data stored as JSON files before ingestion.
 - **Ingestion Layer:** Python pipelines load raw data into PostgreSQL.
 - **Bronze Layer:** Raw ingested data stored with minimal transformation.
@@ -43,6 +41,7 @@ Synthetic Listening Events        MusicBrainz Catalog
                           |
                           v
                   Analytics / Power BI
+```
 
 Apache Airflow will be used for workflow orchestration and pipeline scheduling.
 
@@ -50,18 +49,18 @@ Apache Airflow will be used for workflow orchestration and pipeline scheduling.
 
 # Technology Stack
 
-| Category         | Technology        |
-| ---------------- | ----------------- |
-| Programming      | Python            |
-| Database         | PostgreSQL        |
-| Query Language   | SQL               |
-| Data Format      | JSON              |
-| External Data    | MusicBrainz API   |
-| Transformations  | SQL / dbt         |
-| Orchestration    | Apache Airflow    |
-| Analytics        | Power BI          |
-| Containerization | Docker Compose    |
-| Version Control  | Git & GitHub      |
+| Category         | Technology      |
+| ---------------- | --------------- |
+| Programming      | Python          |
+| Database         | PostgreSQL      |
+| Query Language   | SQL             |
+| Data Format      | JSON            |
+| External Data    | MusicBrainz API |
+| Transformations  | SQL / dbt       |
+| Orchestration    | Apache Airflow  |
+| Analytics        | Power BI        |
+| Containerization | Docker Compose  |
+| Version Control  | Git & GitHub    |
 
 ---
 
@@ -76,10 +75,12 @@ The platform follows a batch-oriented data processing workflow:
 | Ingestion | Load raw datasets into PostgreSQL using Python pipelines |
 | Bronze Layer | Preserve ingested source data with minimal transformation |
 | Silver Layer | Clean, standardize and validate listening and catalog datasets |
-| Gold Layer | Build analytical models and aggregated metrics |
+| Gold Layer | Build analytical models and aggregated business metrics |
 | Analytics | Visualize insights through Power BI dashboards and reports |
 
 The catalog uses a relational model supporting artists, tracks, albums and many-to-many track-artist relationships, allowing collaborations and tracks without an associated album.
+
+Track popularity within the listening dataset is synthetically generated and represents simulated platform activity rather than real-world streaming popularity.
 
 ---
 
@@ -88,7 +89,10 @@ The catalog uses a relational model supporting artists, tracks, albums and many-
 ## Completed
 
 - Generation of 500,000 reproducible synthetic listening events
+- Long-tail synthetic track popularity distribution
+- Stable user-level country and subscription attributes
 - Integration with the MusicBrainz API for real music catalog metadata
+- Curation of catalog tracks from official MusicBrainz releases
 - Batch-based JSON data ingestion
 - PostgreSQL database setup using Docker Compose
 - Bronze layer ingestion
@@ -96,12 +100,12 @@ The catalog uses a relational model supporting artists, tracks, albums and many-
 - Relational catalog data model
 - Many-to-many track-artist relationships
 - Data cleaning and standardization
-- Data quality validation queries and relational integrity checks
+- Data quality validation and relational integrity checks
 
 ## In Progress
 
 - Gold analytical models
-- Catalog integration and validation
+- Gold layer validation
 - Project documentation
 
 ## Future Improvements

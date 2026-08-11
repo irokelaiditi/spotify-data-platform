@@ -1,6 +1,6 @@
 # Data Quality Rules
 
-This document defines the data-quality rules applied across the Spotify Data Platform.
+This document defines the data-quality rules applied across the Music Streaming Data Platform.
 
 ## Bronze Layer
 
