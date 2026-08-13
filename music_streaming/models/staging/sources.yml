@@ -1,0 +1,11 @@
+version: 2
+
+sources:
+  - name: bronze
+    schema: bronze
+    tables:
+      - name: listening_events
+      - name: artists
+      - name: albums
+      - name: tracks
+      - name: track_artists
