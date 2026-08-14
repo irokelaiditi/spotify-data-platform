@@ -1,0 +1,45 @@
+version: 2
+
+models:
+  - name: silver_listening_events
+    columns:
+      - name: event_id
+        data_tests:
+          - not_null
+          - unique
+
+      - name: user_id
+        data_tests:
+          - not_null
+
+      - name: track_id
+        data_tests:
+          - not_null
+
+      - name: event_type
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - track_played
+                  - track_paused
+                  - track_skipped
+                  - track_completed
+
+      - name: country
+        data_tests:
+          - not_null
+
+      - name: device_type
+        data_tests:
+          - not_null
+
+      - name: subscription_type
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - free
+                  - premium
